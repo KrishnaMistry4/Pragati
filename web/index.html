@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pragati — NORCET Prep</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#5b3df5">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand" id="brandLogo">🌱 Pragati</div>
+    <div class="hud">
+      <span id="hudLevel" class="pill">Lv 1</span>
+      <span id="hudXP" class="pill">0 XP</span>
+      <span id="hudPoints" class="pill pts">0 pts</span>
+      <button id="accountBtn" class="avatar-btn" title="Account">👤</button>
+    </div>
+  </header>
+
+  <main id="screen"></main>
+
+  <nav class="tabbar">
+    <button data-tab="home">🏠<span>Home</span></button>
+    <button data-tab="checklist">✅<span>Syllabus</span></button>
+    <button data-tab="calendar">📅<span>Plan</span></button>
+    <button data-tab="quiz">📝<span>Quiz</span></button>
+    <button data-tab="stats">📊<span>Stats</span></button>
+    <button data-tab="rewards">🎁<span>Rewards</span></button>
+  </nav>
+</div>
+
+<div id="modalRoot"></div>
+
+<script src="js/data.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/store.js"></script>
+<script src="js/planner.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/mockexam.js"></script>
+<script src="js/usage.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>

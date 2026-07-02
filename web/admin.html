@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pragati Admin</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+<div id="adminApp">
+  <div id="gate" class="admin-gate">
+    <div class="admin-gate-card">
+      <div class="login-logo">🌱</div>
+      <h1>Pragati Admin</h1>
+      <p class="muted">Live dashboard — connects directly to Supabase, same data her phone sees.</p>
+      <input type="text" id="gateUser" placeholder="Admin username" value="admin"/>
+      <input type="password" id="gatePw" placeholder="Admin PIN"/>
+      <button class="btn block" id="gateGo">Enter</button>
+      <div id="gateError" class="weak" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div id="dash" style="display:none;">
+    <header class="topbar admin-topbar">
+      <div class="brand">🌱 Pragati Admin</div>
+      <div class="hud">
+        <span class="muted" style="margin-right:8px;">Student:</span>
+        <select id="studentPicker" style="width:auto; margin:0;"></select>
+      </div>
+    </header>
+
+    <div class="admin-layout">
+      <nav class="admin-sidebar">
+        <button data-page="overview" class="admin-nav-btn">📊 Overview</button>
+        <button data-page="calendar" class="admin-nav-btn">📅 Calendar</button>
+        <button data-page="content" class="admin-nav-btn">📚 Syllabus &amp; Questions</button>
+        <button data-page="mockexams" class="admin-nav-btn">📝 Mock Exams</button>
+        <button data-page="books" class="admin-nav-btn">📖 Books</button>
+        <button data-page="rewards" class="admin-nav-btn">🎁 Rewards</button>
+        <button data-page="settings" class="admin-nav-btn">⚙️ Settings</button>
+        <button data-page="activity" class="admin-nav-btn">🕓 Activity Log</button>
+      </nav>
+
+      <main class="admin-pages">
+
+        <section id="page-overview" class="admin-page">
+          <div class="admin-page-grid">
+            <div class="card" id="profileCard"></div>
+            <div class="card">
+              <h2>Overview</h2>
+              <div id="overview"></div>
+            </div>
+            <div class="card">
+              <h2>Weak / strong topics</h2>
+              <div id="weakStrong"></div>
+            </div>
+            <div class="card">
+              <h2>Screen-time usage report</h2>
+              <div id="usageReport" class="muted"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-calendar" class="admin-page">
+          <div class="admin-page-grid-2">
+            <div class="card cal-card">
+              <div class="cal-header">
+                <button class="icon-btn" id="calPrev">‹</button>
+                <h2 id="calLabel"></h2>
+                <button class="icon-btn" id="calNext">›</button>
+              </div>
+              <div class="cal-weekdays"></div>
+              <div class="cal-grid" id="calGrid"></div>
+            </div>
+            <div class="card" id="dayEditorCard" style="display:none;">
+              <h2 id="dayEditorTitle"></h2>
+              <div id="dayItemsHost"></div>
+              <h3 style="margin-top:10px;">Add task</h3>
+              <select id="newItemType"><option value="study">Study</option><option value="revise">Revise</option><option value="quiz">Quiz</option><option value="custom">Custom / note</option></select>
+              <select id="newItemSubj"></select>
+              <input type="text" id="newItemLabel" placeholder="Label (optional)"/>
+              <button class="btn small" id="addDayItem">Add</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-content" class="admin-page">
+          <div class="admin-page-grid-2">
+            <div class="card">
+              <h2>Syllabus topics</h2>
+              <select id="addTopicSubj"></select>
+              <div id="topicListForSubj" style="margin:8px 0;"></div>
+              <input type="text" id="addTopicName" placeholder="New topic name"/>
+              <button class="btn small" id="admAddTopic">Add topic</button>
+            </div>
+            <div class="card">
+              <h2>Add quiz question</h2>
+              <p class="muted">Tag it to a book if it came from the one you uploaded.</p>
+              <select id="qSubj"></select>
+              <select id="qBook"><option value="">(no book)</option></select>
+              <select id="qStyle"><option value="prelims">Prelims (one-liner)</option><option value="mains">Mains (case)</option></select>
+              <input type="text" id="qText" placeholder="Question text"/>
+              <input type="text" id="qOpt0" placeholder="Option A"/>
+              <input type="text" id="qOpt1" placeholder="Option B"/>
+              <input type="text" id="qOpt2" placeholder="Option C"/>
+              <input type="text" id="qOpt3" placeholder="Option D"/>
+              <input type="number" id="qAns" placeholder="Correct option index (0-3)"/>
+              <input type="text" id="qExp" placeholder="Explanation"/>
+              <button class="btn small" id="admAddQuestion">Add question</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-mockexams" class="admin-page">
+          <div class="card">
+            <h2>Upload a full mock exam</h2>
+            <p class="muted">Upload a .docx of Q&amp;A in this pattern per question, blank line between each:</p>
+            <pre class="muted" style="white-space:pre-wrap; font-size:11px; background:var(--surface2); padding:8px; border-radius:8px;">1. Question text here?
+A) option one
+B) option two
+C) option three
+D) option four
+Answer: B
+Explanation: why B is correct (optional)</pre>
+            <p class="muted">Exam type (Prelims: 100Q/90min vs Mains: 160Q/180min) is auto-detected from the word "PRELIM"/"MAIN" in the doc, or question count as a fallback.</p>
+            <input type="text" id="mockExamTitle" placeholder="Exam title (e.g. NORCET Mock Test 1)"/>
+            <input type="file" id="mockExamFile" accept=".docx"/>
+            <button class="btn small" id="mockExamParse">Parse document</button>
+            <div id="mockExamPreview" style="margin-top:10px;"></div>
+          </div>
+          <div class="card">
+            <h2>Existing mock exams</h2>
+            <div id="mockExamList"></div>
+          </div>
+        </section>
+
+        <section id="page-books" class="admin-page">
+          <div class="card">
+            <h2>Books</h2>
+            <div id="bookList" class="muted"></div>
+            <input type="text" id="newBookTitle" placeholder="Book title"/>
+            <input type="file" id="newBookFile"/>
+            <button class="btn small" id="admAddBook">Upload book</button>
+          </div>
+        </section>
+
+        <section id="page-rewards" class="admin-page">
+          <div class="admin-page-grid-2">
+            <div class="card">
+              <h2>Rewards catalog</h2>
+              <div id="rewardListAdmin"></div>
+              <input type="text" id="newRewardName" placeholder="Reward name"/>
+              <input type="number" id="newRewardCost" placeholder="Point cost"/>
+              <button class="btn small" id="admAddReward">Add reward</button>
+            </div>
+            <div class="card">
+              <h2>Pending redemptions</h2>
+              <div id="redemptionList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-settings" class="admin-page">
+          <div class="admin-page-grid-2">
+            <div class="card">
+              <h2>Exam dates (selected student)</h2>
+              <label class="muted">Prelims</label>
+              <input type="date" id="admExamPre"/>
+              <label class="muted">Mains</label>
+              <input type="date" id="admExamMain"/>
+              <button class="btn small" id="admSetExam">Update &amp; fill plan</button>
+            </div>
+            <div class="card">
+              <h2>Screen-time rules (all students)</h2>
+              <div class="grid2">
+                <div><label class="muted">WhatsApp cap (min)</label><input type="number" id="ruleWA"/></div>
+                <div><label class="muted">Instagram cap (min)</label><input type="number" id="ruleIG"/></div>
+              </div>
+              <label class="muted">Total social/video cap (min)</label>
+              <input type="number" id="ruleTotal"/>
+              <label class="muted">Points deducted per extra minute</label>
+              <input type="number" id="rulePts"/>
+              <button class="btn small" id="admSetRules">Save rules</button>
+            </div>
+            <div class="card">
+              <h2>Log her app usage (a day)</h2>
+              <input type="date" id="logDate"/>
+              <div class="grid2">
+                <div><label class="muted">WhatsApp min</label><input type="number" id="logWA"/></div>
+                <div><label class="muted">Instagram min</label><input type="number" id="logIG"/></div>
+              </div>
+              <button class="btn small" id="admLogUsage">Log (silent deduction)</button>
+            </div>
+            <div class="card">
+              <h2>AI tutor (nursing chatbot)</h2>
+              <div id="aiKeyStatus" class="muted" style="margin-bottom:8px;"></div>
+              <p class="muted">Get a free-tier key at aistudio.google.com/apikey (starts with "AIza"). Stored server-side only.</p>
+              <input type="password" id="geminiKeyInput" placeholder="Gemini API key"/>
+              <button class="btn small" id="admSaveGeminiKey">Save key</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-activity" class="admin-page">
+          <div class="card">
+            <h2>Recent changes</h2>
+            <p class="muted">Everything you've edited, most recent first. Tap "Edit" to jump straight back to that page.</p>
+            <div id="activityLogHost"></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/store.js"></script>
+<script src="js/planner.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/admin-dashboard.js"></script>
+</body>
+</html>

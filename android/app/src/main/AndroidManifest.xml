@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Needed to read per-app usage stats (WhatsApp/Instagram/etc time). Granted manually
+         via Settings > Special app access > Usage access. Cannot be requested via a normal
+         runtime permission dialog, so the app deep-links the student to that settings screen. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions"/>
+
+    <!-- Step counter -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false"/>
+
+    <!-- Optional AI calls (Gemini) and any future sync -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:label="Pragati"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.Pragati"
+        android:usesCleartextTraffic="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".StepTrackerService"
+            android:exported="false"/>
+
+    </application>
+</manifest>
